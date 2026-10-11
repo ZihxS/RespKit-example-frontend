@@ -1,0 +1,10 @@
+{
+  "name": "respkit-example-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check app.js && node --check api-client.mjs && node --check server.mjs"
+  }
+}

@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A RespKit API example for managing projects and exploring API responses."
+    />
+    <title>RespKit — API example</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <main>
+      <header class="topbar">
+        <a class="brand" href="#config">RespKit <span>API example</span></a>
+        <div class="header-actions">
+          <span id="backend-label" class="backend-label"></span>
+          <span class="connection-pill" id="connection-status"
+            ><i></i> Connecting…</span
+          >
+          <a
+            href="https://zihxs.github.io/RespKit/"
+            target="_blank"
+            rel="noreferrer"
+            >Documentation ↗</a
+          >
+        </div>
+      </header>
+
+      <nav class="navigation" aria-label="Main navigation">
+        <button class="nav-item active" data-view="config">Config</button>
+        <button class="nav-item" data-view="workspace">Projects</button>
+        <button class="nav-item" data-view="playground">
+          Response examples
+        </button>
+        <button class="nav-item" data-view="catalog">Error codes</button>
+      </nav>
+
+      <section id="view-workspace" class="view" hidden>
+        <div class="section-heading">
+          <div>
+            <h1>Projects</h1>
+            <p>Manage projects and tasks.</p>
+          </div>
+          <button class="button primary needs-api" id="new-project">
+            + New project
+          </button>
+        </div>
+        <div id="projects" class="project-grid">
+          <p class="empty">Loading projects…</p>
+        </div>
+        <div class="pagination">
+          <button class="button subtle needs-api" id="previous-projects">
+            Previous
+          </button>
+          <button class="button subtle needs-api" id="next-projects">
+            Next
+          </button>
+        </div>
+        <section
+          id="task-section"
+          aria-labelledby="selected-project-label"
+          hidden
+        >
+          <div class="section-heading task-heading">
+            <div><h2 id="selected-project-label">Tasks</h2></div>
+            <button class="button primary needs-api" id="new-task" disabled>
+              + New task
+            </button>
+          </div>
+          <div id="tasks" class="task-list"></div>
+          <div class="pagination" id="task-pagination" hidden>
+            <button class="button subtle" id="previous-tasks">Previous</button>
+            <button class="button subtle" id="next-tasks">Next</button>
+          </div>
+        </section>
+      </section>
+
+      <section id="view-playground" class="view" hidden>
+        <div class="section-heading">
+          <div>
+            <h1>Response examples</h1>
+            <p>Choose an example and send a request.</p>
+          </div>
+        </div>
+        <div class="scenario-panel">
+          <div class="scenario-request">
+            <label for="scenario-choice"
+              >Response example
+              <select id="scenario-choice" disabled>
+                <option>Loading examples…</option>
+              </select>
+            </label>
+            <div class="scenario-actions">
+              <button class="button primary needs-api" id="run-scenario">
+                Send request
+              </button>
+              <button
+                class="button subtle needs-api"
+                id="inspect-scenario"
+                title="Show RespKit's error classification"
+                hidden
+              >
+                Inspect error
+              </button>
+            </div>
+          </div>
+          <div class="scenario-tools" id="scenario-tools" hidden>
+            <span class="source-tag" id="scenario-source" hidden
+              >Simulated</span
+            >
+          </div>
+          <p class="scenario-note" id="scenario-note" role="status" hidden></p>
+          <details class="code-example">
+            <summary>Explanation and Go code</summary>
+            <p id="scenario-description"></p>
+            <pre id="scenario-snippet"></pre>
+          </details>
+        </div>
+      </section>
+
+      <section id="view-catalog" class="view" hidden>
+        <div class="section-heading">
+          <div>
+            <h1>Error codes</h1>
+            <p>
+              Built-in RespKit codes and messages in all configured languages.
+            </p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="catalog-table">
+            <thead>
+              <tr id="catalog-head">
+                <th>Code</th>
+                <th>HTTP</th>
+              </tr>
+            </thead>
+            <tbody id="catalog-body">
+              <tr>
+                <td colspan="2">Loading error codes…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="view-config" class="view">
+        <div class="section-heading">
+          <div>
+            <h1>Config</h1>
+            <p>Response settings and API connection.</p>
+          </div>
+        </div>
+        <section class="response-controls" aria-label="Response settings">
+          <div class="basic-settings">
+            <label
+              >Message language
+              <select id="language">
+                <option value="id">Indonesian</option>
+                <option value="en" selected>English</option>
+                <option value="fr">French</option>
+                <option value="">Server default</option>
+                <option value="custom">Custom header</option>
+              </select>
+            </label>
+            <label
+              >Error format
+              <select id="format">
+                <option value="envelope">JSON</option>
+                <option value="problem_details">Problem Details</option>
+              </select>
+            </label>
+            <label id="custom-language-label" hidden
+              >Accept-Language
+              <input
+                id="custom-language"
+                placeholder="en-US,en;q=0.9,id;q=0.7"
+                spellcheck="false"
+              />
+            </label>
+          </div>
+          <details class="settings">
+            <summary>Advanced settings</summary>
+            <div class="settings-grid">
+              <label
+                >JSON key naming
+                <select id="naming">
+                  <option value="snake_case">snake_case</option>
+                  <option value="camelCase">camelCase</option>
+                  <option value="PascalCase">PascalCase</option>
+                </select>
+              </label>
+              <label
+                >Fallback language
+                <select id="default-locale">
+                  <option value="id">Indonesian</option>
+                  <option value="en">English</option>
+                </select>
+              </label>
+              <label
+                >Response language override
+                <select id="locale">
+                  <option value="">Use message language</option>
+                  <option value="id">Indonesian</option>
+                  <option value="en">English</option>
+                  <option value="fr">French</option>
+                </select>
+              </label>
+              <label
+                >Request ID
+                <input
+                  id="request-id"
+                  value="demo-001"
+                  maxlength="160"
+                  spellcheck="false"
+                />
+              </label>
+            </div>
+          </details>
+          <details class="connection-settings" id="connection-settings">
+            <summary>API connection</summary>
+            <form id="connection-form" class="connection-form">
+              <label for="base-url" class="sr-only">API URL</label>
+              <input
+                type="url"
+                id="base-url"
+                value="http://127.0.0.1:8080"
+                required
+                spellcheck="false"
+              />
+              <button class="button primary" type="submit" id="connect-button">
+                Connect
+              </button>
+            </form>
+          </details>
+          <p
+            id="connection-message"
+            class="connection-message"
+            role="status"
+            hidden
+          ></p>
+        </section>
+      </section>
+
+      <section
+        class="inspector"
+        id="inspector"
+        aria-label="Request result"
+        hidden
+      >
+        <div class="inspector-top">
+          <div>
+            <h2>Request result</h2>
+            <span id="response-state"></span>
+          </div>
+          <div>
+            <button id="copy-json" class="button subtle" disabled>
+              Copy JSON
+            </button>
+            <button id="copy-curl" class="button subtle" disabled>
+              Copy cURL
+            </button>
+          </div>
+        </div>
+        <p id="response-summary" class="response-summary" role="status"></p>
+        <div class="request-strip">
+          <span id="request-method">GET</span><code id="request-url"></code
+          ><span id="response-time"></span>
+        </div>
+        <pre class="code-block" id="response-body"></pre>
+        <div class="http-details">
+          <details>
+            <summary>Response headers</summary>
+            <dl class="code-block" id="response-headers"></dl>
+          </details>
+          <details>
+            <summary>Request details</summary>
+            <pre class="code-block" id="request-body"></pre>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="editor-dialog">
+      <form id="editor-form" novalidate>
+        <div class="dialog-heading">
+          <h2 id="editor-title">New project</h2>
+          <button
+            type="button"
+            class="icon-button"
+            id="close-editor"
+            aria-label="Close dialog"
+          >
+            ×
+          </button>
+        </div>
+        <div id="editor-fields"></div>
+        <div id="form-errors" class="form-errors" role="alert"></div>
+        <div class="dialog-actions">
+          <button type="button" class="button subtle" id="cancel-editor">
+            Cancel
+          </button>
+          <button type="submit" class="button primary" id="save-editor">
+            Save
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="delete-dialog">
+      <form id="delete-form">
+        <h2 id="delete-title">Delete project?</h2>
+        <p id="delete-message"></p>
+        <div class="form-errors" id="delete-error" role="alert"></div>
+        <div class="dialog-actions">
+          <button type="button" class="button subtle" id="cancel-delete">
+            Cancel
+          </button>
+          <button type="submit" class="button danger" id="confirm-delete">
+            Delete
+          </button>
+        </div>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" role="status" hidden></div>
+  </body>
+</html>
